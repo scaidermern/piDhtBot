@@ -1,0 +1,50 @@
+{
+    "//": "general settings",
+    "general": {
+        "//": "how long to wait after startup for the network & API to become accessible",
+	"//": "useful if started after boot while the network is still being set up",
+	"//": "value is in seconds, specify 0 to wait forever until access succeeds",
+        "startup_timeout": 0,
+
+	"//": "number of days after which records will get deleted. use 0 to keep them forever",
+	"record_days": 0
+    },
+
+    "//": "telegram-related settings",
+    "telegram": {
+        "//": "telegram bot authorization token",
+        "token": "YOUR_TELEGRAM_API_TOKEN",
+
+        "//": "telegram IDs of the bot owner(s). only owners can interact with the bot",
+        "owner_ids": [ YOUR_TELEGRAM_USER_ID ]
+    },
+
+    "//": "DHT sensor settings",
+    "dht": {
+        "//": "DHT type (can be either DHT11 or DHT22",
+        "type": "DHT22",
+
+        "//": "GPIO input pin of DHT sensor",
+        "gpio": 17,
+
+	"//": "sensor read intervall in seconds, you can also use 0 for continuous reads",
+	"//": "(which will read every 2.0 seconds, which is the minimum read interval).",
+	"//": "each record is about 32 bytes, so an interval of 60 seconds will result in 45 kB per day.",
+	"read_interval": 60.0
+    },
+
+    "//": "image plotting settings",
+    "plot": {
+        "//": "path where the plotted images will be stored, temporarily",
+        "path": "/tmp/piDhtBot.png",
+
+	"//": "width of plotted image in inch, set to 0 to use the default",
+	"width": 12.8,
+
+	"//": "height of plotted image in height, set to 0 to use the default",
+	"height": 9.6,
+
+    	"//": "dpi of plotted images",
+	"dpi": 100
+    }
+}
