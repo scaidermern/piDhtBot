@@ -550,6 +550,7 @@ class piDhtBot:
                 # unknown exception
                 self.logger.exception('DHT: Unknown exception received')
                 # don't continue here, see e.g. https://github.com/adafruit/Adafruit_CircuitPython_DHT/issues/50
+                self.dhtDevice.exit()
                 raise
 
             if temp is None or hum is None:
