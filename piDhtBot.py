@@ -527,6 +527,11 @@ class piDhtBot:
             self.logger.error('DHT: Invalid sensor type: %s' % sensor)
             sys.exit(1)
 
+        # add gap marker
+        now = datetime.datetime.now()
+        record = self.record(now, float('NaN'), float('NaN'))
+        self.addRecord(record)
+
         firstRead = True
         nextRead = lastComplain = datetime.datetime.now()
         while True:
