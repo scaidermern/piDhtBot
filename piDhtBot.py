@@ -541,6 +541,9 @@ class piDhtBot:
                (now - lastComplain).total_seconds() > 60 * 5:
                 self.logger.warning('DHT: Could not read from sensor within time')
                 lastComplain = now
+                # add gap marker
+                record = self.record(now, float('NaN'), float('NaN'))
+                self.addRecord(record)
 
             try:
                 temp = hum = None
