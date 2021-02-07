@@ -549,8 +549,8 @@ class piDhtBot:
             except:
                 # unknown exception
                 self.logger.exception('DHT: Unknown exception received')
-                time.sleep(0.2)
-                continue
+                # don't continue here, see e.g. https://github.com/adafruit/Adafruit_CircuitPython_DHT/issues/50
+                raise
 
             if temp is None or hum is None:
                 self.logger.debug('DHT: Read incomplete data, trying again')
