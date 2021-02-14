@@ -29,7 +29,7 @@ class piDhtBot:
             self.temp = temp
             self.hum = hum
 
-    class records:
+    class recordCollection:
         '''Record list and corresponding record statistics.'''
         class recordStat:
             '''Record statistics.'''
@@ -431,8 +431,8 @@ class piDhtBot:
 
     def getRecords(self, dateStart=None, dateEnd=None):
         '''Get records for the given time range.'''
-        allRecords = self.records()
-        for recordFile in self.listRecordFiles():
+        allRecords = self.recordCollection()
+        for recordFile in self.listRecordFiles(dateStart, dateEnd):
             records = self.readRecords(recordFile, dateStart, dateEnd)
             if len(records.recordList) == 0:
                 continue
@@ -440,15 +440,30 @@ class piDhtBot:
             allRecords.addRecordList(records)
         return allRecords
 
-    def listRecordFiles(self):
+    def listRecordFiles(self, dateStart=None, dateEnd=None):
         '''List all record files.'''
+        if dateStart is not None:
+            # replace with start of the day since data records are stored per day
+            dateStart = dateStart.replace(hour=0, minute=0, second=0, microsecond=0)
         recordFiles = []
         recordBaseName = self.botName + '.rec'
-        for fileName in os.listdir('.'):
+        files = os.listdir('.')
+        files.sort()
+        for fileName in files:
             if not fileName.startswith(recordBaseName):
                 continue
             if fileName == recordBaseName:
                 # skip current record
+                continue
+            try:
+                dateStr = fileName[len(recordBaseName) + 1:]
+                fileDate = datetime.datetime.strptime(dateStr, '%Y-%m-%d')
+            except:
+                self.logger.exception('Error: Parsing date from record file %s failed:' % fileName)
+                continue
+            if dateStart is not None and fileDate < dateStart:
+                continue
+            if dateEnd is not None and fileDate > dateEnd:
                 continue
             recordFiles.append(fileName)
         recordFiles.sort()
@@ -459,7 +474,7 @@ class piDhtBot:
     def readRecords(self, fileName, dateStart=None, dateEnd=None):
         '''Read the given record file and return records for the given time range.'''
         with open(fileName, 'r') as f:
-            records = self.records()
+            records = self.recordCollection()
             lineNum = 0
             for line in f:
                 lineNum += 1
