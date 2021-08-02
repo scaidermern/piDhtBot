@@ -57,9 +57,10 @@ There is also a shell script which automatically restarts the bot on fatal error
 The bot will automatically start with data recording.
 
 You can use `/help` to list the available commands:
-- `/show: Show last read data.`
-- `/plot: Plot recorded data.`
-- `/help: Show a list of supported commands.`
+- `/show`: Show last read data.
+- `/plot`: Plot recorded data.
+- `/log`: Show recent log messages.
+- `/help`: Show a list of supported commands.
 
 The `/plot` command will offer a list of time ranges to plot to the user.
 

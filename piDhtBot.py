@@ -14,8 +14,8 @@ import signal
 import sys
 import threading
 import time
-from collections import namedtuple
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from collections import deque
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, MAX_MESSAGE_LENGTH
 from telegram.error import NetworkError, Unauthorized
 from telegram.ext import Updater, MessageHandler, Filters, CallbackQueryHandler
 
@@ -252,6 +252,8 @@ class piDhtBot:
             self.commandShow(update)
         elif cmd == '/plot':
             self.commandPlot(update)
+        elif cmd == '/log':
+            self.commandLog(update)
         elif cmd == '/help':
             self.commandHelp(update)
         else:
@@ -264,10 +266,11 @@ class piDhtBot:
         message.reply_text(
         '/show - Show last read data.\n'
         '/plot - Plot recorded data.\n'
+        '/log - Show recent log messages.\n'
         '/help - Show this help.')
 
     def commandShow(self, update):
-        '''Handle the show command.'''
+        '''Handle the show command. Show the last recorded data.'''
         message = update.message
         if self.lastRecord == None:
             message.reply_text('No data yet.')
@@ -276,6 +279,19 @@ class piDhtBot:
         record = self.lastRecord
         message.reply_text('%s\nTemperature: %.2f °C\nHumidity: %.2f %%' % 
                 (record.ts.replace(microsecond=0), record.temp, record.hum))
+
+    def commandLog(self, update):
+        '''Handle the log command. Show recent log messages.'''
+        numLines = 100
+        messages = deque(maxlen=numLines)
+        fileName = self.botName + '.log'
+        with open(fileName, 'r') as f:
+            for line in f:
+                line = line.rstrip('\n')
+                messages.append(line)
+
+        message = update.message
+        message.reply_text("\n".join(messages)[-MAX_MESSAGE_LENGTH:])
 
     def commandPlot(self, update):
         '''Handle the plot command. Present time ranges to the user.'''
