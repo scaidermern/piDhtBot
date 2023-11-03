@@ -541,6 +541,7 @@ class piDhtBot:
         plt.tight_layout()
 
         plt.savefig(self.plotImagePath)
+        plt.close('all')
 
     def readDHT(self):
         '''Continuously read from the DHT sensor.'''
