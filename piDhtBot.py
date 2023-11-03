@@ -6,6 +6,7 @@ import datetime
 import json
 import logging
 import logging.handlers
+import math
 import matplotlib.pyplot as plt
 import matplotlib.ticker
 import os
@@ -92,6 +93,18 @@ class piDhtBot:
         self.dateTimeFormat = '%Y-%m-%d %H:%M:%S'
         # last data record
         self.lastRecord = None
+
+        # for outlier detection
+        # last recorded temperature values
+        self.lastTemps = []
+        # last recorded humidity values
+        self.lastHums = []
+        # how many last recorded values to use for rolling median computation,
+        # only odd values supported! (to make median computation easier)
+        self.rollingMedianSize = 5
+        # maximum allowed difference of new values compared to median,
+        # values with a larger difference will get ignored
+        self.medianMaxDiff = 5.0
 
         # DHT sensor
         self.dhtDevice = None
@@ -559,7 +572,7 @@ class piDhtBot:
             self.logger.error('DHT: Invalid sensor type: %s' % sensor)
             sys.exit(1)
 
-        # add gap marker
+        # add gap marker at startup
         now = datetime.datetime.now()
         record = self.record(now, float('NaN'), float('NaN'))
         self.addRecord(record)
@@ -602,6 +615,26 @@ class piDhtBot:
             if firstRead:
                 firstRead = False
                 self.logger.info('DHT: Sensor working')
+
+            # simple outlier detection, sometimes the sensor returns bogus values
+            self.lastTemps.append(temp)
+            self.lastHums.append(hum)
+            skip = False
+            if len(self.lastTemps) > self.rollingMedianSize:
+                self.lastTemps = self.lastTemps[-self.rollingMedianSize:]
+                median = sorted(self.lastTemps)[int(self.rollingMedianSize / 2)]
+                if math.fabs(temp - median) > self.medianMaxDiff:
+                    skip = True
+                    self.logger.warning('Skipping bogus temperature reading: %.2f median %.2f' % (temp, median))
+                    temp = float('NaN')
+            if len(self.lastHums) > self.rollingMedianSize:
+                self.lastHums = self.lastHums[-self.rollingMedianSize:]
+                median = sorted(self.lastHums)[int(self.rollingMedianSize / 2)]
+                if math.fabs(hum - median) > self.medianMaxDiff:
+                    skip = True
+                    self.logger.warning('Skipping bogus humidity reading: %.2f median %.2f' % (hum, median))
+                    hum = float('NaN')
+
             try:
                 record = self.record(now, temp, hum)
                 self.lastRecord = record
