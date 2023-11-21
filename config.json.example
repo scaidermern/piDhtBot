@@ -30,7 +30,22 @@
 	"//": "sensor read intervall in seconds, you can also use 0 for continuous reads",
 	"//": "(which will read every 2.0 seconds, which is the minimum read interval).",
 	"//": "each record is about 32 bytes, so an interval of 60 seconds will result in 45 kB per day.",
-	"read_interval": 60.0
+	"read_interval": 60.0,
+
+	"//": "outlier detection",
+	"//": "used to filter out bogus sensor readings",
+	"outlier_detection": {
+	    "//": "whether to perform outlier detection",
+	    "enable": true,
+
+	    "//": "how many previously recorded values to use for rolling median computation,",
+	    "//": "only odd values supported!",
+	    "rolling_median_size": 9,
+
+	    "//": "maximum allowed difference of new values compared to median",
+	    "//": "values with a larger difference will get ignored",
+	    "median_max_diff": 5.0
+	}
     },
 
     "//": "image plotting settings",
