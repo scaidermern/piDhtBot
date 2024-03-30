@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import adafruit_dht
+import board
 import datetime
 import json
 import logging
@@ -19,6 +20,8 @@ from collections import deque
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, MAX_MESSAGE_LENGTH
 from telegram.error import NetworkError, Unauthorized
 from telegram.ext import Updater, MessageHandler, Filters, CallbackQueryHandler
+
+from config import gpio
 
 class piDhtBot:
     '''Python DHT Telegram bot.'''
@@ -240,7 +243,7 @@ class piDhtBot:
             time.sleep(1)
             # check if all threads are still alive
             for thread in threads:
-                if thread.isAlive():
+                if thread.is_alive():
                     continue
 
                 # something went wrong, bailing out
@@ -572,7 +575,6 @@ class piDhtBot:
 
         # minimum read interval is 2.0, lower intervals will return cached values
         readInterval = max(2.0, float(self.config['dht']['read_interval']))
-        gpio = int(self.config['dht']['gpio'])
         sensor = self.config['dht']['type']
         if sensor == 'DHT11':
             self.dhtDevice = adafruit_dht.DHT11(gpio)

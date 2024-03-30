@@ -22,12 +22,12 @@ To install the necessary software on Raspberry Pi OS, Debian or a similar distri
   - `apt install libgpiod2 libtiff5 libopenjp2-7-dev libatlas3-base`
   - `apt install python3-pip`
 - as regular user:
-  - `pip3 install python-telegram-bot adafruit-circuitpython-dht matplotlib`
+  - `pip3 install python-telegram-bot==13.14 adafruit-circuitpython-dht matplotlib`
   
 ## Configuration
 Copy `config.json.example` to `config.json` and open it for editing. In section `telegram` enter your Telegram `token` and `owner_ids`. See these [instructions for obtaining your Telegram user ID](https://stackoverflow.com/questions/31078710/how-to-obtain-telegram-chat-id-for-a-specific-user). Alternatively just add your Telegram token and a random owner ID, run piDhtBot and send a message to your bot. piDhtBot will log messages from unknown users and write out their user IDs.
 
-For the DHT sensor set a correct `dht`:`type` and `dht`:`gpio` port. You can use `python test_dht.py` to check if the DHT sensor is working and a correct gpio port has been configured. Note that errors during reading are expected from this test script.
+For the DHT sensor set a correct `dht`:`type` in `config.json` and `gpio` port in `config.py`. You can use `python test_dht.py` to check if the DHT sensor is working and a correct gpio port has been configured. Note that errors during reading are expected from this test script.
 
 There are various further configuration options available. For example the data logging interval and the size and DPI of the plotted images.
 

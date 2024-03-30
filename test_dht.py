@@ -2,10 +2,13 @@
 # -*- coding: utf-8 -*-
 
 import adafruit_dht
+import board
 import json
 import signal
 import sys
 import time
+
+from config import gpio
 
 # always cleanup GPIO on strg-c or kill
 def signalHandler(signal, frame):
@@ -14,7 +17,6 @@ def signalHandler(signal, frame):
 
 config = json.load(open('config.json', 'r'))
 sensor = config['dht']['type']
-gpio = config['dht']['gpio']
 interval = 4.0
 if sensor == 'DHT11':
     dhtDevice = adafruit_dht.DHT11(gpio)
